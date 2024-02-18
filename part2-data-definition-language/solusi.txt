@@ -1,34 +1,175 @@
 1) Create database alta_online_shop.
-Sulisi SQL:
+Sulisi SQL: CREATE DATABASE "alta_online_shop";
+            CREATE SCHEMA "OLshop";
 
 2) Dari schema Olshop yang telah kamu kerjakan di, Implementasikanlah menjadi table pada MySQL.
     2.a Create table user
-    Sulisi SQL:
+    Sulisi SQL: 
+
+CREATE TABLE "OLshop"."user" (
+        nama_id 		SERIAL,
+        nama_pelanggan	VARCHAR(255),
+
+        PRIMARY KEY (nama_id)
+);
+
+CREATE TABLE "OLshop"."alamat" (
+        nama_id 			INT, 
+        alamat 				VARCHAR(255),
+	    FOREIGN KEY (nama_id) REFERENCES "OLshop"."user"(nama_id),
+		
+	 	PRIMARY KEY (nama_id)
+);
+
+CREATE TABLE "OLshop"."tanggal_lahir" (
+   		nama_id 			INT, 
+    	tanggal_lahir 		DATE,
+		FOREIGN KEY (nama_id) REFERENCES "OLshop"."user"(nama_id),
+	
+		PRIMARY KEY (nama_id)
+);
+
+
+ CREATE TABLE "OLshop"."status_user" (
+        nama_id 			INT,
+		status_user			VARCHAR(255), 
+	    FOREIGN KEY (nama_id) REFERENCES "OLshop"."user"(nama_id), 
+	 
+	 	PRIMARY KEY (nama_id)
+);
+       
+CREATE TABLE "OLshop"."gender" (
+	 	gender_id		SERIAL,
+        gender 			VARCHAR(50),
+		nama_id 		INT UNIQUE, 
+	    FOREIGN KEY (nama_id) REFERENCES "OLshop"."user"(nama_id),	 
+	 
+	 	PRIMARY KEY (gender_id)
+);
+
+CREATE TABLE "OLshop"."create_at" (
+        nama_id 			INT,
+		create_at			TIMESTAMP, 
+	    FOREIGN KEY (nama_id) REFERENCES "OLshop"."user"(nama_id), 
+	 
+	 	PRIMARY KEY (nama_id)
+);
+
+
+ CREATE TABLE "OLshop"."update_at" (
+        nama_id 			INT,
+		update_at			TIMESTAMP, 
+	    FOREIGN KEY (nama_id) REFERENCES "OLshop"."user"(nama_id), 
+	 
+	 	PRIMARY KEY (nama_id)
+);
 
     2.b Create table product, product_type, product_description, payment_method.
     Sulisi SQL:
 
-    3.c Create table transaction, transaction detail.
-    Sulisi SQL:
+  CREATE TABLE "OLshop"."product" (
+        product_id 			SERIAL,
+		nama_product		VARCHAR(255),
+
+        PRIMARY KEY (product_id)
+);
+
+CREATE TABLE "OLshop"."product_type" (
+        product_type_id 		SERIAL,
+		nama_type				VARCHAR(255),
+	    product_id 				INT,
+		FOREIGN KEY (product_id) REFERENCES "OLshop"."product"(product_id), 
+        PRIMARY KEY (product_type_id)
+);
+
+CREATE TABLE "OLshop"."product_description" (
+        product_id 					INT,
+		product_description			VARCHAR(255), 
+	    FOREIGN KEY (product_id) REFERENCES "OLshop"."product"(product_id),
+	 
+	 	PRIMARY KEY (product_id)
+);
+
+CREATE TABLE "OLshop"."product_merk" (
+        product_merk_id 	SERIAL,
+		nama_merk			VARCHAR(255),
+	    product_id 			INT,
+		FOREIGN KEY (product_id) REFERENCES "OLshop"."product"(product_id),
+	
+        PRIMARY KEY (product_merk_id)
+);
+
+CREATE TABLE "OLshop"."payment_methods" (
+        payment_method_id 			SERIAL,
+		nama_payment_method			VARCHAR(255),
+	
+	PRIMARY KEY (payment_method_id)
+);
+
+
 
 3) Create table kurir dengan field id, name, created_at, updated_at.
 Sulisi SQL:
 
+
+CREATE TABLE "OLshop"."kurir"(
+    "field id"					SERIAL,
+    "name"					VARCHAR(50),
+    create_at	 			TIMESTAMP,
+    update_at 				TIMESTAMP,
+    PRIMARY KEY ("field id")
+);
+
 4) Tambahkan ongkos_dasar column di tabel kurir.
 Sulisi SQL:
+
+ALTER TABLE "OLshop"."kurir" ADD COLUMN ongkos_dasar INTEGER;
 
 5) Rename tabel kurir menjadi shipping.
 Sulisi SQL:
 
+ALTER TABLE "OLshop"."kurir" RENAME TO "shipping";
+
 6) Hapus / Drop tabel shipping karena ternyata tidak dibutuhkan.
 Sulisi SQL:
+
+DROP TABLE "OLshop"."shipping";
 
 7) Silahkan menambahkan entity baru dengan relation 1-to-1, 1-to-many, many-to-many. Seperti:
     7.a) 1-to-1: payment_method dengan description.
     Sulisi SQL:
 
+CREATE TABLE "OLshop"."transactions" (
+    transaction_id SERIAL PRIMARY KEY,
+    transaction_description VARCHAR(255)
+);
+
+CREATE TABLE "OLshop"."payment_methods" (
+    payment_method_id SERIAL PRIMARY KEY,
+    nama_payment_method VARCHAR(255),
+    transaction_id INT UNIQUE,
+    FOREIGN KEY (transaction_id) REFERENCES "OLshop"."transactions"(transaction_id)
+);
+
+
     7.b) 1-to-many: user dengan alamat.
     Sulisi SQL:
 
+  CREATE TABLE "OLshop"."alamat" (
+        nama_id 			INT, 
+        alamat 				VARCHAR(255),
+	    FOREIGN KEY (nama_id) REFERENCES "OLshop"."user"(nama_id),
+		
+	 	PRIMARY KEY (nama_id)
+);
+
     7.c) many-to-many: user dengan payment_method menjadi user_payment_method_detail.
     Sulisi SQL:
+
+    CREATE TABLE "OLshop"."user_payment_method_detail" (
+    user_id                 INT,
+    payment_method_id       INT,
+    PRIMARY KEY (user_id, payment_method_id),
+    FOREIGN KEY (user_id) REFERENCES "OLshop"."user"(nama_id),
+    FOREIGN KEY (payment_method_id) REFERENCES "OLshop"."payment_methods"(payment_method_id)
+);
